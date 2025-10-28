@@ -1,0 +1,19 @@
+{
+  "Version": "1.1",
+  "TranDtls": {"TaxSch": "GST","SupTyp": "B2B","comment":"Seller GSTI Number", "RegRev": "N", "IgstOnIntra": "N"},
+  "DocDtls": {"Typ": "INV", "No": "siri4/12", "Dt": "10/05/2025"},
+  "SellerDtls": {"Gstin": "29AAGCB1286Q000", "LglNm": "ABC company pvt ltd", "TrdNm": "NIC Industries", "Addr1": "5th block, kuvempu layout", "Addr2": "kuvempu layout", "Loc": "GANDHINAGAR", "Pin": 560001, "Stcd": "29", "Ph": "9000000000", "Em": "abc@gmail.com"},
+  "BuyerDtls": {"Gstin": "29AWGPV7107B1Z1", "LglNm": "XYZ company pvt ltd", "TrdNm": "XYZ Industries", "Pos": "29", "Addr1": "7th block, kuvempu layout", "Addr2": "kuvempu layout", "Loc": "GANDHINAGAR", "Pin": 560001, "Stcd": "29", "Ph": "9000052600", "Em": "bbc@gmail.com"},
+  "ItemList": [
+    {
+      "SlNo": "1", "IsServc": "N", "PrdDesc": "Rice", "HsnCd": "1001", 
+      "BchNm": "123456", "BchExpDt": "31/12/2025", "BchWrDt": "01/05/2024",
+      "Qty": 100.345, "FreeQty": 0, "Unit": "NOS", "UnitPrice": 99.545, "TotAmt": 9988.84,
+      "Discount": 0, "PreTaxVal": 0, "AssAmt": 9988.84, "GstRt": 12,
+      "SgstAmt": 599.33, "CgstAmt": 599.33, "IgstAmt": 0, "CesRt": 0, "CesAmt": 0,
+      "CesNonAdvlAmt": 0, "StateCesRt": 0, "StateCesAmt": 0, "StateCesNonAdvlAmt": 0,
+      "OthChrg": 0, "TotItemVal": 11187.50
+    }
+  ],
+  "ValDtls": {"AssVal": 9988.84, "CgstVal": 599.33, "SgstVal": 599.33, "IgstVal": 0, "CesVal": 0, "StCesVal": 0, "Discount": 0, "OthChrg": 0, "RndOffAmt": 0, "TotInvVal": 11187.50}
+}

@@ -1,0 +1,181 @@
+{
+  "Version": "1.1",
+
+  "TranDtls": {
+    "TaxSch": "GST",
+    "comment_TaxSch": "Tax scheme, always 'GST' for Indian e-invoices",
+
+    "SupTyp": "B2B",
+    "comment_SupTyp": "Type of supply — B2B, B2C, SEZ, EXP, etc.",
+
+    "RegRev": "N",
+    "comment_RegRev": "Reverse charge applicable? 'Y' for Yes, 'N' for No",
+
+    "IgstOnIntra": "N",
+    "comment_IgstOnIntra": "If 'Y', IGST applies even for intra-state supply"
+  },
+
+  "DocDtls": {
+    "Typ": "INV",
+    "comment_Typ": "Document type — INV for Invoice, CRN for Credit Note, DRN for Debit Note etc.",
+
+    "No": "siri4/12",
+    "comment_No": "Unique invoice number issued by the supplier",
+
+    "Dt": "10/05/2025",
+    "comment_Dt": "Date of invoice in DD/MM/YYYY format"
+  },
+
+  "SellerDtls": {
+    "Gstin": "29AAGCB1286Q000",
+    "comment_Gstin": "Seller’s 15-digit GSTIN number",
+
+    "LglNm": "ABC company pvt ltd",
+    "comment_LglNm": "Seller’s registered legal name",
+
+    "TrdNm": "NIC Industries",
+    "comment_TrdNm": "Seller’s trade name, if different from legal name",
+
+    "Addr1": "5th block, kuvempu layout",
+    "Addr2": "kuvempu layout",
+    "Loc": "GANDHINAGAR",
+    "comment_Loc": "City or locality of seller’s address",
+
+    "Pin": 560001,
+    "comment_Pin": "6-digit postal PIN code",
+
+    "Stcd": "29",
+    "comment_Stcd": "State code as per GST (e.g. 29 = Karnataka)",
+
+    "Ph": "9000000000",
+    "Em": "abc@gmail.com"
+  },
+
+  "BuyerDtls": {
+    "Gstin": "29AWGPV7107B1Z1",
+    "comment_Gstin": "Buyer’s GSTIN (must match registered state code)first two letters(29)",
+
+    "LglNm": "XYZ company pvt ltd",
+    "TrdNm": "XYZ Industries",
+
+    "Pos": "29",
+    "comment_Pos": "Place of Supply (state code) — same as buyer’s state for intra-state",
+
+    "Addr1": "7th block, kuvempu layout",
+    "Addr2": "kuvempu layout",
+    "Loc": "GANDHINAGAR",
+    "Pin": 560001,
+    "Stcd": "29",
+    "Ph": "9000052600",
+    "Em": "bbc@gmail.com"
+  },
+
+  "ItemList": [
+    {
+      "SlNo": "1",
+      "comment_SlNo": "Item serial number in the invoice",
+
+      "IsServc": "N",
+      "comment_IsServc": "Y for Service, N for Goods",
+
+      "PrdDesc": "Rice",
+      "comment_PrdDesc": "Description of goods ",
+
+      "HsnCd": "1001",
+      "comment_HsnCd": "HSN/SAC code of the product",
+
+      "BchNm": "123456",
+      "BchExpDt": "31/12/2025",
+      "BchWrDt": "01/05/2024",
+      "comment_Bch": "Batch details (optional)",
+
+      "Qty": 100.345,
+      "comment_Qty": "Quantity of goods supplied",
+
+      "FreeQty": 0,
+      "Unit": "NOS",
+      "UnitPrice": 99.545,
+      "TotAmt": 9988.84,
+      "comment_TotAmt": "Total amount before discount",
+
+      "Discount": 0,
+      "PreTaxVal": 0,
+      "AssAmt": 9988.84,
+      "comment_AssAmt": "Taxable value after discount",
+
+      "GstRt": 12,
+      "comment_GstRt": "Applicable GST rate (%)",
+
+      "SgstAmt": 599.33,
+      "CgstAmt": 599.33,
+      "IgstAmt": 0,
+      "comment_TaxAmts": "SGST/CGST/IGST split depending on intra/inter state",
+
+      "CesRt": 0,
+      "comment_CesRt": "Cess Rate -additional Taxes",
+
+      "CesAmt": 0,
+      "comment_CesAmt":"cess Amount :monetary value of the cess calculated on the taxable value of the item ",
+      
+      "CesNonAdvlAmt": 0,
+      "comment_CesNonAdvlAmt":"Non-Advol Cess Amount-Some cesses cannot be claimed as input tax credit. These are “non-advalorem” or non-adval cesses.",
+      
+      "StateCesRt": 0,
+      "StateCesAmt": 0,
+      "StateCesNonAdvlAmt": 0,
+      "comment_Ces": "Cess components, if any (usually 0 for normal goods)",
+
+      "OthChrg": 0,
+      "TotItemVal": 11187.50,
+      "comment_TotItemVal": "Total value of item including taxes and other charges"
+    }
+  ],
+
+  "ValDtls": {
+    "AssVal": 9988.84,
+    "comment_AssVal": "Total taxable value of all items",
+
+    "CgstVal": 599.33,
+    "SgstVal": 599.33,
+    "IgstVal": 0,
+    "comment_TaxVals": "Total CGST/SGST/IGST values",
+
+    "CesVal": 0,
+    "comment_CesVal": "Final invoice amount including all taxes",
+    
+    "StCesVal": 0,
+    "Discount": 0,
+    "OthChrg": 0,
+    "RndOffAmt": 0,
+    "TotInvVal": 11187.50,
+    "comment_TotInvVal": "Final invoice amount including all taxes"
+  }
+},
+
+
+{
+  "Irn": "47d7ba1814b6ca6123c780ad289b0a24e30c1baed59a7417d29a54e7b00a6bdf",
+  "Distance": 100,
+  "TransMode": "1",
+  "TransId": "12AWGPV7107B1Z1",
+  "TransName": "trans name",
+  "TransDocDt": "01/08/2020",
+  "TransDocNo": "TRAN/DOC/11",
+  "VehNo": "KA12ER1234",
+  "VehType": "R",
+  "ExpShipDtls": {
+    "Addr1": "7th block, kuvempu layout",
+    "Addr2": "kuvempu layout",
+    "Loc": "Banagalore",
+    "Pin": 562160,
+    "Stcd": "29"
+  },
+  "DispDtls": {
+    "Nm": "ABC company pvt ltd",
+    "Addr1": "7th block, kuvempu layout",
+    "Addr2": "kuvempu layout",
+    "Loc": "Banagalore",
+    "Pin": 562160,
+    "Stcd": "29"
+  }
+}
