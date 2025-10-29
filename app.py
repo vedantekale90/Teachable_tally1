@@ -1,4 +1,5 @@
 import time 
+import os
 from flask import Flask, render_template, request, jsonify
 import requests
 import json
@@ -6,13 +7,18 @@ import qrcode
 import base64
 from io import BytesIO
 from functools import wraps
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 # ============================================================
 # 🔐 SECRET KEY (for future use)
 # ============================================================
 
-SECRET_API_KEY = "Logiangle@1111"
+SECRET_API_KEY = os.getenv("SECRET_API_KEY")
+
 def require_api_key(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -35,23 +41,31 @@ GET_EINVOICE_URL = f"{BASE_URL}/einvoice/type/GETIRN/version/V1_03"
 PUBLIC_SEARCH_URL = f"{BASE_URL}/public/search"
 
 # Sandbox credentials (use your test credentials)
-SANDBOX_EMAIL = "santoshp@logiangle.com"
+#SANDBOX_EMAIL = "santoshp@logiangle.com"
+SANDBOX_EMAIL = os.getenv("SANDBOX_EMAIL")
+SANDBOX_USERNAME = os.getenv("SANDBOX_USERNAME")
+SANDBOX_PASSWORD = os.getenv("SANDBOX_PASSWORD")
+SANDBOX_CLIENT_ID = os.getenv("SANDBOX_CLIENT_ID")
+SANDBOX_CLIENT_SECRET = os.getenv("SANDBOX_CLIENT_SECRET")
+
 SANDBOX_HEADERS = {
-    "username": "BVMGSP",
-    "password": "Wbooks@0142",
-    "client_id": "EINSf90f2abd-d10c-4976-a59f-27eb3a6c73aa",
-    "client_secret": "EINS6aa3e0ff-8f9d-4b38-a5ad-7a79385ee243",
+    "username": SANDBOX_USERNAME,
+    "password": SANDBOX_PASSWORD,
+    "client_id": SANDBOX_CLIENT_ID,
+    "client_secret": SANDBOX_CLIENT_SECRET,
 }
 
 # Public GST verification credentials (different client_id / secret)
-PUBLIC_CLIENT_ID = "GSTS9e0f6426-11f3-4136-9920-9c60b50e584c"
-PUBLIC_CLIENT_SECRET = "GSTS2cb2a023-8f95-4934-ba04-3ed84c5fb9f4"
+# PUBLIC_CLIENT_ID = "GSTS9e0f6426-11f3-4136-9920-9c60b50e584c"
+# PUBLIC_CLIENT_SECRET = "GSTS2cb2a023-8f95-4934-ba04-3ed84c5fb9f4"
+PUBLIC_CLIENT_ID = os.getenv("PUBLIC_CLIENT_ID")
+PUBLIC_CLIENT_SECRET = os.getenv("PUBLIC_CLIENT_SECRET")
 
 # ============================================================
 # 🕓 AUTH TOKEN CACHE (VALID 6 HOURS)
 # ============================================================
 auth_cache = {"token": None, "timestamp": 0}
-TOKEN_VALIDITY = 6 * 60 * 60  # 6 hours
+TOKEN_VALIDITY = 1 * 60 * 60  # 6 hours
 
 def get_auth_token(gstin):
     """Fetch AuthToken only if cache expired"""
@@ -67,10 +81,53 @@ def get_auth_token(gstin):
     try:
         # for counting api hits
         api_hit_counter["authenticate"] += 1
+        # Try GET first (existing approach)
         auth_resp = requests.get(AUTH_URL, headers=headers, params={"email": SANDBOX_EMAIL}, timeout=10)
+        print("🔸 AUTH STATUS:", auth_resp.status_code)
         print("🔸 AUTH RAW RESPONSE:", auth_resp.text)
-        auth_data = auth_resp.json()
-        token = auth_data.get("data", {}).get("AuthToken")
+        # print sanitized headers for debugging (mask secrets)
+        headers_to_log = headers.copy()
+        for k in ("password", "client_secret"):
+            if k in headers_to_log:
+                headers_to_log[k] = "****"
+        print("🔸 AUTH REQ HEADERS:", headers_to_log)
+        try:
+            auth_data = auth_resp.json()
+        except Exception as e:
+            print("❌ Failed to parse auth JSON:", e)
+            auth_data = None
+
+        # Try multiple possible token locations
+        token = None
+        if auth_data:
+            token = auth_data.get("data", {}).get("AuthToken") or auth_data.get("AuthToken") or auth_data.get("token") or auth_data.get("access_token") or auth_data.get("data", {}).get("token")
+
+        # If no token from GET, try POST fallback (some APIs expect POST)
+        if not token:
+            try:
+                print("🔁 Auth GET failed to return token; trying POST fallback...")
+                post_payload = {
+                    "username": SANDBOX_HEADERS.get("username"),
+                    "password": SANDBOX_HEADERS.get("password"),
+                    "client_id": SANDBOX_HEADERS.get("client_id"),
+                    "client_secret": SANDBOX_HEADERS.get("client_secret"),
+                    "gstin": gstin,
+                    "email": SANDBOX_EMAIL
+                }
+                post_headers = {"Content-Type": "application/json"}
+                post_resp = requests.post(AUTH_URL, json=post_payload, headers=post_headers, timeout=10)
+                print("🔸 AUTH POST STATUS:", post_resp.status_code)
+                print("🔸 AUTH POST RAW RESPONSE:", post_resp.text)
+                try:
+                    post_data = post_resp.json()
+                except Exception as e:
+                    print("❌ Failed to parse auth POST JSON:", e)
+                    post_data = None
+
+                if post_data:
+                    token = post_data.get("data", {}).get("AuthToken") or post_data.get("AuthToken") or post_data.get("token") or post_data.get("access_token") or post_data.get("data", {}).get("token")
+            except Exception as e:
+                print("❌ Auth POST attempt failed:", e)
 
         if token:
             auth_cache["token"] = token
@@ -78,7 +135,7 @@ def get_auth_token(gstin):
             print("✅ New AuthToken cached.")
             return token
         else:
-            print("❌ AuthToken missing in response.")
+            print("❌ AuthToken missing in response after GET and POST attempts.")
             return None
     except Exception as e:
         print("❌ Auth Error:", e)
@@ -200,7 +257,7 @@ def create_einvoice():
             "ack_dt": ack_dt,
             "signed_invoice": signed_invoice,
             "signed_qr": signed_qr,
-            "qr_code": qr_base64,
+            #"qr_code": qr_base64,
             "einvoice_data": einvoice_data
         })
 
@@ -245,11 +302,12 @@ def verify_gst():
 # 🧾 ROUTE: Tally Integration API
 # ============================================================
 API2BOOKS_URL = "https://api.api2books.com/api/User/SalesWithInventory"
+X_AUTH_KEY = os.getenv("X_AUTH_KEY")
 @app.route('/test_api', methods=['POST'])
 @require_api_key
 def test_api():
     headers = {
-        "X-Auth-Key": "test_c1d71cba8854433cbf964f0a7e281005",
+        "X-Auth-Key": X_AUTH_KEY,
         "Template-Key": "1",
         "CompanyName": "Invoiso Private Limited",
         "AddAutoMaster": "1",
@@ -283,6 +341,7 @@ api_hit_counter = {
     "test_api": 0
 }
 @app.route('/api_hits', methods=['GET'])
+@require_api_key
 def get_api_hits():
     return jsonify(api_hit_counter)
 
